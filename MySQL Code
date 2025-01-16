@@ -1,0 +1,37 @@
+#Rename primary key column
+ALTER TABLE fraudtest RENAME COLUMN MyUnknownColumn TO ID;
+
+#Remove unnecessary columns 
+ALTER TABLE fraudtest 
+DROP COLUMN street, 
+DROP COLUMN zip;
+
+#Identify fraudulent transactions 
+SELECT * 
+FROM fraudtest
+WHERE is_fraud = 1;  
+
+#Identify the top 10 most fraudulent merchants 
+SELECT merchant, COUNT(*) AS fraud_count
+FROM fraudtest
+WHERE is_fraud = 1
+GROUP BY merchant 
+ORDER BY fraud_count DESC
+LIMIT 10;
+
+#Calculate the total number of transactions by category 
+SELECT category, ROUND(SUM(amt), 1) AS total_fraud_amount
+FROM fraudtest 
+WHERE is_fraud = 1 
+GROUP BY category
+ORDER BY total_fraud_amount; 
+
+#Percentage of fraudulent transactions by city 
+SELECT city, 
+    COUNT(*) AS total_transactions, 
+    SUM(is_fraud) AS fraud_transactions, 
+    (SUM(is_fraud) / COUNT(*)) * 100 AS fraud_percentage 
+FROM fraudtest 
+GROUP BY city 
+HAVING fraud_percentage > 0
+ORDER BY fraud_percentage DESC;
