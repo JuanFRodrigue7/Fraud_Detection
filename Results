@@ -1,0 +1,70 @@
+1. Identify the top 10 most fraudulent merchants 
+SELECT merchant, COUNT(*) AS fraud_count
+FROM fraudtest
+WHERE is_fraud = 1
+GROUP BY merchant 
+ORDER BY fraud_count DESC
+LIMIT 10;
+
+-> Table 
+|             Merchant                | fraud_count | 
+| fraud_Sawayn PLC                    | 3           |
+| fraud_Huel, Hammes and Witting      | 3           |
+| fraud_Osinski, Ledner and Leuschke  | 3           |
+| fraud_Schumm PLC                    | 3           |
+| fraud_Schultz, Simonis and Little   | 3           |
+| fraud_Schiller, Blanda and Johnson  | 2           |
+| fraud_Rodriguez, Yost and Jenkins   | 2           |
+| fraud_Volkman Ltd                   | 2           |
+| fraud_Volkman Ltd                   | 2           |
+| fraud_Mosciski, Ziemann and Farrell | 2           |
+
+
+2. Calculate the total number of transactions by category 
+SELECT category, ROUND(SUM(amt), 1) AS total_fraud_amount
+FROM fraudtest 
+WHERE is_fraud = 1 
+GROUP BY category
+ORDER BY total_fraud_amount;  
+
+-> Table 
+| category       | total_fraud_amount | 
+| grocery_net    |  13.2              |
+| travel         |  23.5              |
+| kids_pets      |  59.1              |
+| gas_transport  |  82.9              |
+| health_fitness |  110.9             |
+| personal_care  |  113.1             |
+| misc_pos       |  115.8             |
+| Food_dining    |  231.3             |
+| Home           |  1322.1            |
+| Entertainment  |  2682.3            |
+
+
+3. Percentage of fraudulent transactions by city 
+SELECT city, 
+    COUNT(*) AS total_transactions, 
+    SUM(is_fraud) AS fraud_transactions, 
+    (SUM(is_fraud) / COUNT(*)) * 100 AS fraud_percentage 
+FROM fraudtest 
+GROUP BY city 
+HAVING fraud_percentage > 0
+ORDER BY fraud_percentage DESC;
+
+-> Table 
+| city         | total_transactions | fraud_transactions | fraud_percentage |
+| Springville  | 12                 | 12                 |	100.0000        |
+| Heislerville | 27	                | 15                 |  55.5556         |
+| Akron	       | 17                 | 9                  |  52.9412         | 
+| Viola	       | 37                 | 14                 |  37.8378         |
+| Benton	   | 10                 | 3                  |  30.0000         |  
+| Highland	   | 33                 | 9                  |  27.2727         |
+| Vero Beach   | 34                 | 9                  |  26.4706         |
+| Issaquah	   | 50                 | 11                 |  22.0000         |
+| Louisville   | 58                 | 12                 |  20.6897         |
+| Bernard	   | 37                 | 7                  |  18.9189         |
+| Denham       | 53                 | 8                  |  15.0943         | 
+| Steuben	   | 58                 | 8                  |  13.7931         |
+| Gadsden	   | 75                 | 10                 |  13.3333         |
+| Grover	   | 50                 | 6                  |  12.0000         |
+| Notrees	   | 45                 | 2                  |  4.4444          |
